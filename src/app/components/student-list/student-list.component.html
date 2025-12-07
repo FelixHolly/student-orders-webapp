@@ -1,0 +1,41 @@
+<div class="student-list">
+  <h2>Students</h2>
+
+  @if (loading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading students...</p>
+    </div>
+  }
+
+  @if (errorMessage()) {
+    <div class="error-message">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (!loading() && students().length === 0 && !errorMessage()) {
+    <div class="empty-state">
+      <p>No students found. Create your first student below.</p>
+    </div>
+  }
+
+  @if (!loading() && students().length > 0) {
+    <div class="students-grid">
+      @for (student of students(); track student.id) {
+        <div
+          class="student-card"
+          [class.selected]="isSelected(student)"
+          (click)="selectStudent(student)"
+          tabindex="0"
+          role="button"
+          [attr.aria-label]="'Select student ' + student.name"
+        >
+          <h3>{{ student.name }}</h3>
+          <p class="grade">{{ student.grade }}</p>
+          <p class="school">{{ student.school }}</p>
+        </div>
+      }
+    </div>
+  }
+</div>

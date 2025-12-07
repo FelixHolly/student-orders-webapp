@@ -1,0 +1,103 @@
+.student-list {
+  h2 {
+    margin-bottom: 1rem;
+    color: #333;
+    font-weight: 600;
+  }
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+
+  .spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #667eea;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+
+  p {
+    color: #6c757d;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  border: 1px solid #f5c6cb;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #6c757d;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.students-grid {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 1rem;
+}
+
+.student-card {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #667eea;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
+    transform: translateY(-2px);
+  }
+
+  &:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+  }
+
+  &.selected {
+    border-color: #667eea;
+    background-color: #f0f3ff;
+    box-shadow: 0 2px 12px rgba(102, 126, 234, 0.2);
+  }
+
+  h3 {
+    margin: 0 0 8px 0;
+    color: #333;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 4px 0;
+    font-size: 0.9rem;
+    color: #6c757d;
+
+    &.grade {
+      font-weight: 500;
+      color: #495057;
+    }
+
+    &.school {
+      font-size: 0.85rem;
+    }
+  }
+}
