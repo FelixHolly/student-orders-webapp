@@ -1,9 +1,7 @@
 import {Component, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {StudentListComponent} from './components/student-list/student-list.component';
-import {StudentFormComponent} from './components/student-form/student-form.component';
 import {OrderListComponent} from './components/order-list/order-list.component';
-import {OrderFormComponent} from './components/order-form/order-form.component';
 import {Student} from './models/student.model';
 
 @Component({
@@ -11,9 +9,7 @@ import {Student} from './models/student.model';
   imports: [
     CommonModule,
     StudentListComponent,
-    StudentFormComponent,
-    OrderListComponent,
-    OrderFormComponent
+    OrderListComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.scss'

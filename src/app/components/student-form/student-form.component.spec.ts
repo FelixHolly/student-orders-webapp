@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { of, throwError } from 'rxjs';
 import { StudentFormComponent } from './student-form.component';
 import { StudentService } from '../../services/student.service';
@@ -15,9 +16,11 @@ describe('StudentFormComponent', () => {
     const studentServiceSpy = jasmine.createSpyObj('StudentService', ['create']);
 
     await TestBed.configureTestingModule({
-      imports: [StudentFormComponent, ReactiveFormsModule, HttpClientTestingModule],
+      imports: [StudentFormComponent, ReactiveFormsModule],
       providers: [
-        { provide: StudentService, useValue: studentServiceSpy }
+        { provide: StudentService, useValue: studentServiceSpy },
+        provideHttpClient(),
+        provideHttpClientTesting()
       ]
     }).compileComponents();
 

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { SimpleChange } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { OrderListComponent } from './order-list.component';
@@ -32,9 +33,11 @@ describe('OrderListComponent', () => {
     const orderServiceSpy = jasmine.createSpyObj('OrderService', ['getByStudentId']);
 
     await TestBed.configureTestingModule({
-      imports: [OrderListComponent, HttpClientTestingModule],
+      imports: [OrderListComponent],
       providers: [
-        { provide: OrderService, useValue: orderServiceSpy }
+        { provide: OrderService, useValue: orderServiceSpy },
+        provideHttpClient(),
+        provideHttpClientTesting()
       ]
     }).compileComponents();
 
