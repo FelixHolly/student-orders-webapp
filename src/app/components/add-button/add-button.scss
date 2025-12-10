@@ -1,6 +1,6 @@
 .add-button {
-  width: 36px;
-  height: 36px;
+  width: clamp(32px, 4vw, 36px);
+  height: clamp(32px, 4vw, 36px);
   border-radius: 50%;
   border: 2px solid #667eea;
   background: white;
@@ -24,7 +24,7 @@
   }
 
   .add-icon {
-    font-size: 28px;
+    font-size: clamp(24px, 3.5vw, 28px);
     line-height: 0;
     font-weight: 200;
     width: 100%;
@@ -32,6 +32,5 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: -2px;
   }
 }

@@ -27,6 +27,7 @@
     margin: 0;
     color: #333;
     font-weight: 600;
+    font-size: clamp(1rem, 2vw, 1.25rem);
   }
 }
 
@@ -147,13 +148,6 @@
 }
 
 @media screen and (max-width: 1024px) {
-  .student-list {
-    h2 {
-      font-size: 1.1rem;
-      margin-bottom: 0.75rem;
-    }
-  }
-
   .students-grid {
     gap: 10px;
   }
@@ -178,20 +172,8 @@
 }
 
 @media screen and (max-width: 768px) {
-  :host {
-    min-height: 150px;
-  }
-
-  .student-list {
-    h2 {
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
-    }
-  }
-
   .students-grid {
     gap: 8px;
-    min-height: 100px;
   }
 
   .student-card {
@@ -203,6 +185,54 @@
 
     p {
       font-size: 0.8rem;
+    }
+  }
+}
+
+@media screen and (max-height: 700px) {
+  .header-with-button {
+    margin-bottom: 0.75rem;
+  }
+
+  .empty-state {
+    padding: 1.5rem;
+  }
+
+  .student-card {
+    padding: 8px 12px;
+
+    h3 {
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+
+    p {
+      margin: 2px 0;
+      font-size: 0.8rem;
+    }
+  }
+}
+
+@media screen and (max-height: 500px) {
+  .header-with-button {
+    margin-bottom: 0.5rem;
+  }
+
+  .students-grid {
+    gap: 6px;
+  }
+
+  .student-card {
+    padding: 6px 10px;
+
+    h3 {
+      font-size: 0.85rem;
+      margin-bottom: 3px;
+    }
+
+    p {
+      font-size: 0.75rem;
+      margin: 1px 0;
     }
   }
 }
