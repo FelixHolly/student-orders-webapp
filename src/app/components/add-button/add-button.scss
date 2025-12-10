@@ -25,12 +25,9 @@
 
   .add-icon {
     font-size: clamp(24px, 3.5vw, 28px);
-    line-height: 0;
-    font-weight: 200;
-    width: 100%;
+    line-height: 1;
+    font-weight: 300;
+    display: block;
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 }

@@ -1,128 +1,152 @@
-# Student Orders Management Application
+# Student Orders Frontend
 
-A modern Angular application for managing students and their orders, built with Angular 20 and standalone components.
+A web app for managing students and their orders. Built with Angular 20 and designed to be fully responsive.
 
-## Features
+## What's Inside
 
-### Student Management
-- View all students in an intuitive card layout
-- Create new students with validated forms
-- Real-time form validation with error messages
-- Visual selection highlighting
-- Loading states and error handling
-
-### Order Management
-- View orders for selected student in a table format
-- Create new orders with status (pending/paid)
-- Currency formatting ($25.50)
-- Date formatting (Jan 15, 2024)
-- Total amount calculation across all orders
-- Status badges with color coding
-
-### UI/UX Features
-- Responsive two-column layout (desktop) / stacked (mobile)
-- Beautiful gradient background
-- Loading spinners during API calls
-- Empty states with helpful messages
-- Form validation with inline errors
-- Disabled states when appropriate
-- Hover effects and visual feedback
-- Accessibility features (ARIA labels, keyboard navigation)
-
-## Tech Stack
-
-- **Angular 20** - Latest Angular with standalone components
-- **TypeScript 5.8** - Type-safe development
-- **RxJS 7.8** - Reactive programming
-- **SCSS** - Advanced styling
-- **HttpClient** - REST API integration
+This is built with Angular 20.1 using the new standalone components and signals API. I'm using TypeScript 5.8 for type safety, RxJS for reactive programming, and SCSS for styling. The whole thing is pretty well tested with 139 unit tests.
 
 ## Getting Started
 
-### Prerequisites
+You'll need Node.js 18+ and npm 9+ installed. Make sure the backend is running on `http://localhost:8080` before starting the frontend.
 
-- Node.js (v18 or higher)
-- npm (v9 or higher)
-- Backend API running on http://localhost:8080
-
-### Installation
-
-1. Install dependencies:
 ```bash
 npm install
-```
-
-2. Start the development server:
-```bash
 npm start
 ```
 
-3. Open your browser and navigate to:
-```
-http://localhost:4200
-```
+The app will be available at `http://localhost:4200`.
 
-### Backend API
+Other useful commands:
+- `npm build` - Production build
+- `npm test` - Run all tests
+- `npm run watch` - Build and watch for changes
 
-Ensure your backend API is running on `http://localhost:8080` with the following endpoints:
+## How It Works
 
-- `GET /students` - Get all students
-- `POST /students` - Create a student
-- `GET /orders?studentId={id}` - Get orders for a student
-- `POST /orders` - Create an order
+The app has a two-column layout on desktop. On the left, you see all students displayed as cards. Click on a student to see their orders on the right side in a table format. You can add new students and create orders for them.
 
-## Available Scripts
+### Main Components
 
-- `npm start` - Start development server (http://localhost:4200)
-- `npm run build` - Build for production
-- `npm test` - Run unit tests
-- `npm run watch` - Build in watch mode
+**Student List**
+Shows all students in a scrollable grid. When you click a student, it highlights and shows their orders. There's a + button to add new students.
 
-## Project Structure
+**Order List**
+Displays orders for the selected student in a table. Shows the total amount, status (pending or paid), and when each order was created. There's also a grand total at the bottom.
+
+**Forms**
+Both student and order forms have validation. You can't create an order without selecting a student first. Student names, grades, and schools are required. Orders need a total amount (at least $0.01) and a status.
+
+### Project Structure
 
 ```
 src/app/
-├── models/
-│   ├── student.model.ts      # Student interface
-│   └── order.model.ts        # Order interface
-├── services/
-│   ├── student.service.ts    # Student API service
-│   └── order.service.ts      # Order API service
 ├── components/
-│   ├── student-list/         # Student list component
-│   ├── student-form/         # Student creation form
-│   ├── order-list/           # Order list component
-│   └── order-form/           # Order creation form
-├── app.ts                    # Main app component
-├── app.html                  # Main app template
-├── app.scss                  # Main app styles
-└── app.config.ts             # App configuration
+│   ├── student-list/
+│   ├── student-form/
+│   ├── order-list/
+│   ├── order-form/
+│   └── add-button/
+├── services/
+│   ├── student.service.ts
+│   └── order.service.ts
+├── models/
+│   ├── student.model.ts
+│   └── order.model.ts
+└── app.ts
 ```
 
-## Form Validation
+## Data Models
 
-### Student Form
-- **Name**: Required, max 100 characters
-- **Grade**: Required, max 20 characters
-- **School**: Required, max 150 characters
+Students have a name, grade, and school. Orders belong to a student and have a total amount and status (pending or paid).
 
-### Order Form
-- **Total**: Required, minimum $0.01
-- **Status**: Required (pending or paid)
+```typescript
+// Student
+{
+  id?: number;
+  name: string;        // max 100 chars
+  grade: string;       // max 20 chars
+  school: string;      // max 150 chars
+  createdAt?: string;
+}
+
+// Order
+{
+  id?: number;
+  studentId: number;
+  total: number;       // min $0.01
+  status: 'pending' | 'paid';
+  createdAt?: string;
+}
+```
+
+## API Integration
+
+The app talks to a REST API on `localhost:8080`:
+
+- `GET /students` - Get all students
+- `POST /students` - Create a new student
+- `GET /orders?studentId={id}` - Get orders for a student
+- `POST /orders` - Create a new order
 
 ## Responsive Design
 
-- **Desktop (>768px)**: Two-column grid layout
-- **Tablet (768px-1024px)**: Stacked layout
-- **Mobile (<768px)**: Single column, optimized spacing
+The layout adapts to different screen sizes. On mobile/tablet (under 768px), the two columns stack vertically. I'm using CSS `clamp()` for dynamic font sizing, so everything scales smoothly.
 
-## Browser Support
+The viewport is fixed at 100vh - no page scrolling. Instead, the student grid and order table scroll internally. This works better on devices with small heights like landscape phones.
 
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
+Some breakpoints:
+- Below 768px: Stacked layout
+- Below 700px height: More compact spacing
+- Below 500px height: Even more compact
 
-## License
+## Testing
 
-MIT
+There are 139 tests covering all the services and components. They test things like HTTP calls, error handling, form validation, currency formatting, and user interactions.
+
+```bash
+npm test                                # Run tests in watch mode
+npm test -- --browsers=ChromeHeadless   # Headless mode
+```
+
+## What's Missing
+
+This is a pretty basic CRUD app right now. Here's what it doesn't have yet:
+
+- No way to edit students or orders once created
+- No delete functionality
+- No search or filtering
+- Everything loads at once (no pagination)
+- No sorting options
+- Single page app with no routing
+- If you refresh the page, you lose the selected student
+- Error messages show inline, no fancy toast notifications
+
+## Ideas for Improvements
+
+Some things that would make this better:
+
+**Most Important:**
+- Add edit and delete - basic CRUD stuff
+- Search students by name or school
+- Filter orders by status or date range
+- Toast notifications so you know when things work
+- Save the selected student in localStorage
+
+**Would Be Nice:**
+- Pagination for when there are lots of students
+- Sorting (by name, date, amount, etc.)
+- Proper routing with deep links
+- A dashboard showing stats like total revenue
+
+**If I Had More Time:**
+- Export orders to CSV or PDF
+- Dark mode
+- Offline support with service workers
+- Better keyboard navigation
+
+## Tech Notes
+
+I'm using Angular's newest features - standalone components instead of NgModules, and signals for state management. The testing setup uses the new provider-based approach instead of the deprecated HttpClientTestingModule.
+
+Prettier is configured for consistent code formatting, and TypeScript is running in strict mode.
