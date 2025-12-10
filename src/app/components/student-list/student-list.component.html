@@ -1,26 +1,38 @@
 <div class="student-list">
-  <h2>Students</h2>
+  <div class="header-with-button">
+    <h2>Students</h2>
+    <app-add-button
+      [isOpen]="showAddForm()"
+      [ariaLabel]="showAddForm() ? 'Close add student form' : 'Open add student form'"
+      (clicked)="toggleAddForm()"
+    ></app-add-button>
+  </div>
 
-  @if (loading()) {
-    <div class="loading">
-      <div class="spinner"></div>
-      <p>Loading students...</p>
-    </div>
-  }
+  @if (showAddForm()) {
+    <app-student-form
+      (studentCreated)="onStudentCreated($event)"
+    ></app-student-form>
+  } @else {
+    @if (loading()) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading students...</p>
+      </div>
+    }
 
-  @if (errorMessage()) {
-    <div class="error-message">
-      {{ errorMessage() }}
-    </div>
-  }
+    @if (errorMessage()) {
+      <div class="error-message">
+        {{ errorMessage() }}
+      </div>
+    }
 
-  @if (!loading() && students().length === 0 && !errorMessage()) {
-    <div class="empty-state">
-      <p>No students found. Create your first student below.</p>
-    </div>
-  }
+    @if (!loading() && students().length === 0 && !errorMessage()) {
+      <div class="empty-state">
+        <p>No students found. Click + to add your first student.</p>
+      </div>
+    }
 
-  @if (!loading() && students().length > 0) {
+    @if (!loading() && students().length > 0) {
     <div class="students-grid">
       @for (student of students(); track student.id) {
         <div
@@ -37,5 +49,6 @@
         </div>
       }
     </div>
+    }
   }
 </div>

@@ -2,10 +2,12 @@ import { Component, OnInit, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Student } from '../../models/student.model';
 import { StudentService } from '../../services/student.service';
+import { StudentFormComponent } from '../student-form/student-form.component';
+import { AddButton } from '../add-button/add-button';
 
 @Component({
   selector: 'app-student-list',
-  imports: [CommonModule],
+  imports: [CommonModule, StudentFormComponent, AddButton],
   templateUrl: './student-list.component.html',
   styleUrl: './student-list.component.scss'
 })
@@ -16,6 +18,7 @@ export class StudentListComponent implements OnInit {
   selectedStudent = signal<Student | null>(null);
   loading = signal<boolean>(false);
   errorMessage = signal<string>('');
+  showAddForm = signal<boolean>(false);
 
   constructor(private studentService: StudentService) {}
 
@@ -50,5 +53,10 @@ export class StudentListComponent implements OnInit {
 
   onStudentCreated(student: Student): void {
     this.students.update(students => [...students, student]);
+    this.showAddForm.set(false);
+  }
+
+  toggleAddForm(): void {
+    this.showAddForm.update(value => !value);
   }
 }

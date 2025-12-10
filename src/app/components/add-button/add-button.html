@@ -1,0 +1,7 @@
+<button
+  class="add-button"
+  (click)="onClick()"
+  [attr.aria-label]="ariaLabel"
+  type="button">
+  <span class="add-icon">{{ isOpen ? '×' : '+' }}</span>
+</button>

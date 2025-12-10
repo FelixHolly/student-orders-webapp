@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  flex-shrink: 0;
+}
+
 .order-form {
   background: white;
   border: 1px solid #e9ecef;
@@ -128,5 +133,47 @@ form {
     background-color: #adb5bd;
     cursor: not-allowed;
     opacity: 0.6;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .order-form {
+    padding: 16px;
+    margin-top: 0.75rem;
+
+    h3 {
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+    }
+  }
+
+  form {
+    gap: 12px;
+  }
+
+  .form-group {
+    gap: 4px;
+
+    label {
+      font-size: 0.85rem;
+    }
+
+    input,
+    select {
+      padding: 8px 10px;
+      font-size: 0.9rem;
+    }
+  }
+
+  .btn-primary {
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .order-form {
+    padding: 12px;
+    margin-top: 0.5rem;
   }
 }

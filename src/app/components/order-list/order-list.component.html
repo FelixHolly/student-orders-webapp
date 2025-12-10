@@ -1,26 +1,39 @@
 <div class="order-list">
-  <h2>Orders</h2>
+  <div class="header-with-button">
+    <h2>Orders</h2>
+    <app-add-button
+      [isOpen]="showAddForm()"
+      [ariaLabel]="showAddForm() ? 'Close add order form' : 'Open add order form'"
+      (clicked)="toggleAddForm()"
+    ></app-add-button>
+  </div>
 
-  @if (loading()) {
-    <div class="loading">
-      <div class="spinner"></div>
-      <p>Loading orders...</p>
-    </div>
-  }
+  @if (showAddForm()) {
+    <app-order-form
+      [studentId]="studentId"
+      (orderCreated)="onOrderCreated($event)"
+    ></app-order-form>
+  } @else {
+    @if (loading()) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <p>Loading orders...</p>
+      </div>
+    }
 
-  @if (errorMessage()) {
-    <div class="error-message">
-      {{ errorMessage() }}
-    </div>
-  }
+    @if (errorMessage()) {
+      <div class="error-message">
+        {{ errorMessage() }}
+      </div>
+    }
 
-  @if (!loading() && orders().length === 0 && !errorMessage()) {
-    <div class="empty-state">
-      <p>No orders found. Create the first order below.</p>
-    </div>
-  }
+    @if (!loading() && orders().length === 0 && !errorMessage()) {
+      <div class="empty-state">
+        <p>No orders found. Click + to add your first order.</p>
+      </div>
+    }
 
-  @if (!loading() && !errorMessage() && orders().length > 0) {
+    @if (!loading() && !errorMessage() && orders().length > 0) {
     <div class="orders-table-container">
       <table class="orders-table">
         <thead>
@@ -57,5 +70,6 @@
         }
       </table>
     </div>
+    }
   }
 </div>

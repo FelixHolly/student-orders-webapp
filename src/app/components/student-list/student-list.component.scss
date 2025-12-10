@@ -1,6 +1,30 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .student-list {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+}
+
+.header-with-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+  padding-top: 1px;
+
   h2 {
-    margin-bottom: 1rem;
+    margin: 0;
     color: #333;
     font-weight: 600;
   }
@@ -52,6 +76,27 @@
   display: grid;
   gap: 12px;
   margin-bottom: 1rem;
+  overflow-y: auto;
+  flex: 1;
+  padding: 4px;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+
+    &:hover {
+      background: #555;
+    }
+  }
 }
 
 .student-card {
@@ -65,7 +110,6 @@
   &:hover {
     border-color: #667eea;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.15);
-    transform: translateY(-2px);
   }
 
   &:focus {
@@ -98,6 +142,67 @@
 
     &.school {
       font-size: 0.85rem;
+    }
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .student-list {
+    h2 {
+      font-size: 1.1rem;
+      margin-bottom: 0.75rem;
+    }
+  }
+
+  .students-grid {
+    gap: 10px;
+  }
+
+  .student-card {
+    padding: 12px;
+
+    h3 {
+      font-size: 1rem;
+      margin-bottom: 6px;
+    }
+
+    p {
+      font-size: 0.85rem;
+      margin: 3px 0;
+
+      &.school {
+        font-size: 0.8rem;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  :host {
+    min-height: 150px;
+  }
+
+  .student-list {
+    h2 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+
+  .students-grid {
+    gap: 8px;
+    min-height: 100px;
+  }
+
+  .student-card {
+    padding: 10px;
+
+    h3 {
+      font-size: 0.95rem;
+    }
+
+    p {
+      font-size: 0.8rem;
     }
   }
 }

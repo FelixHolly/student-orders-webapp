@@ -2,10 +2,12 @@ import { Component, Input, OnChanges, SimpleChanges, signal } from '@angular/cor
 import { CommonModule } from '@angular/common';
 import { Order } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
+import { OrderFormComponent } from '../order-form/order-form.component';
+import { AddButton } from '../add-button/add-button';
 
 @Component({
   selector: 'app-order-list',
-  imports: [CommonModule],
+  imports: [CommonModule, OrderFormComponent, AddButton],
   templateUrl: './order-list.component.html',
   styleUrl: './order-list.component.scss'
 })
@@ -15,6 +17,7 @@ export class OrderListComponent implements OnChanges {
   orders = signal<Order[]>([]);
   loading = signal<boolean>(false);
   errorMessage = signal<string>('');
+  showAddForm = signal<boolean>(false);
 
   constructor(private orderService: OrderService) {}
 
@@ -68,5 +71,10 @@ export class OrderListComponent implements OnChanges {
 
   onOrderCreated(order: Order): void {
     this.orders.update(orders => [...orders, order]);
+    this.showAddForm.set(false);
+  }
+
+  toggleAddForm(): void {
+    this.showAddForm.update(value => !value);
   }
 }

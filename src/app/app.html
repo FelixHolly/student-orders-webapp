@@ -1,18 +1,9 @@
 <div class="container">
-  <header>
-    <h1>Student Orders Management</h1>
-    <p class="subtitle">Manage students and their orders efficiently</p>
-  </header>
-
   <main class="grid">
     <section class="panel students-panel">
       <app-student-list
-        #studentList
         (studentSelected)="onStudentSelected($event)"
       ></app-student-list>
-      <app-student-form
-        (studentCreated)="studentList.onStudentCreated($event)"
-      ></app-student-form>
     </section>
 
     <section class="panel orders-panel">
@@ -25,13 +16,8 @@
           </div>
         </div>
         <app-order-list
-          #orderList
           [studentId]="selectedStudent()!.id!"
         ></app-order-list>
-        <app-order-form
-          [studentId]="selectedStudent()!.id!"
-          (orderCreated)="orderList.onOrderCreated($event)"
-        ></app-order-form>
       } @else {
         <div class="empty-state-main">
           <h3>No Student Selected</h3>
