@@ -134,14 +134,15 @@ Some things that would make this better:
 - Save the selected student in localStorage
 
 **Would Be Nice:**
+- Order overview page - see all orders from all students in one place
 - Pagination for when there are lots of students
 - Sorting (by name, date, amount, etc.)
 - Proper routing with deep links
 - A dashboard showing stats like total revenue
+- ESLint for code quality and consistency
 
 **If I Had More Time:**
 - Export orders to CSV or PDF
-- Dark mode
 - Offline support with service workers
 - Better keyboard navigation
 
