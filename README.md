@@ -37,25 +37,6 @@ Displays orders for the selected student in a table. Shows the total amount, sta
 **Forms**
 Both student and order forms have validation. You can't create an order without selecting a student first. Student names, grades, and schools are required. Orders need a total amount (at least $0.01) and a status.
 
-### Project Structure
-
-```
-src/app/
-├── components/
-│   ├── student-list/
-│   ├── student-form/
-│   ├── order-list/
-│   ├── order-form/
-│   └── add-button/
-├── services/
-│   ├── student.service.ts
-│   └── order.service.ts
-├── models/
-│   ├── student.model.ts
-│   └── order.model.ts
-└── app.ts
-```
-
 ## Data Models
 
 Students have a name, grade, and school. Orders belong to a student and have a total amount and status (pending or paid).
