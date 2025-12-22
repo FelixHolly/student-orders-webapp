@@ -50,13 +50,6 @@ export class OrderListComponent implements OnChanges {
     return this.orders().reduce((sum, order) => sum + order.total, 0);
   }
 
-  formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount);
-  }
-
   formatDate(dateString: string | undefined): string {
     if (!dateString) {
       return 'N/A';

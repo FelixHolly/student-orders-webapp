@@ -203,33 +203,6 @@ describe('OrderListComponent', () => {
     });
   });
 
-  describe('formatCurrency', () => {
-    it('should format currency correctly', () => {
-      expect(component.formatCurrency(25.50)).toBe('$25.50');
-    });
-
-    it('should format whole numbers', () => {
-      expect(component.formatCurrency(100)).toBe('$100.00');
-    });
-
-    it('should format small amounts', () => {
-      expect(component.formatCurrency(0.01)).toBe('$0.01');
-    });
-
-    it('should format large amounts', () => {
-      expect(component.formatCurrency(1234567.89)).toBe('$1,234,567.89');
-    });
-
-    it('should format zero', () => {
-      expect(component.formatCurrency(0)).toBe('$0.00');
-    });
-
-    it('should handle negative amounts', () => {
-      const result = component.formatCurrency(-50.25);
-      expect(result).toContain('50.25');
-    });
-  });
-
   describe('formatDate', () => {
     it('should format valid date string', () => {
       const result = component.formatDate('2024-12-08T10:00:00');
@@ -375,7 +348,6 @@ describe('OrderListComponent', () => {
       component.orders.set(largeOrders);
 
       expect(component.getTotalAmount()).toBe(999999.99);
-      expect(component.formatCurrency(999999.99)).toBe('$999,999.99');
     });
 
     it('should handle multiple orders with same total', () => {

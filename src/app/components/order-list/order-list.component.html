@@ -48,7 +48,7 @@
           @for (order of orders(); track order.id) {
             <tr>
               <td>#{{ order.id }}</td>
-              <td class="total">{{ formatCurrency(order.total) }}</td>
+              <td class="total">{{ order.total | currency:'USD' }}</td>
               <td>
                 <span class="status-badge" [class]="'status-' + order.status">
                   {{ order.status }}
@@ -63,7 +63,7 @@
             <tr class="total-row">
               <td colspan="1"><strong>Total:</strong></td>
               <td colspan="3" class="grand-total">
-                <strong>{{ formatCurrency(getTotalAmount()) }}</strong>
+                <strong>{{ getTotalAmount() | currency:'USD' }}</strong>
               </td>
             </tr>
           </tfoot>
