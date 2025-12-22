@@ -1,5 +1,6 @@
-import { Component, Input, OnChanges, SimpleChanges, signal } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges, signal, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Order } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
 import { OrderFormComponent } from '../order-form/order-form.component';
@@ -19,6 +20,8 @@ export class OrderListComponent implements OnChanges {
   errorMessage = signal<string>('');
   showAddForm = signal<boolean>(false);
 
+  private destroyRef = inject(DestroyRef);
+
   constructor(private orderService: OrderService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -31,7 +34,7 @@ export class OrderListComponent implements OnChanges {
     this.loading.set(true);
     this.errorMessage.set('');
 
-    this.orderService.getByStudentId(this.studentId).subscribe({
+    this.orderService.getByStudentId(this.studentId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (orders) => {
         this.orders.set(orders);
         this.loading.set(false);

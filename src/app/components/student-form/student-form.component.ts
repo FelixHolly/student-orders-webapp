@@ -1,6 +1,7 @@
-import { Component, Output, EventEmitter, signal } from '@angular/core';
+import { Component, Output, EventEmitter, signal, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Student } from '../../models/student.model';
 import { StudentService } from '../../services/student.service';
 
@@ -16,6 +17,8 @@ export class StudentFormComponent {
   studentForm: FormGroup;
   submitting = signal<boolean>(false);
   errorMessage = signal<string>('');
+
+  private destroyRef = inject(DestroyRef);
 
   constructor(
     private fb: FormBuilder,
@@ -39,7 +42,7 @@ export class StudentFormComponent {
 
     const studentData = this.studentForm.value;
 
-    this.studentService.create(studentData).subscribe({
+    this.studentService.create(studentData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (student) => {
         this.studentCreated.emit(student);
         this.studentForm.reset();

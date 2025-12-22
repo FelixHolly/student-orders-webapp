@@ -1,6 +1,7 @@
-import { Component, Input, Output, EventEmitter, signal, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, OnChanges, SimpleChanges, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Order } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
 
@@ -17,6 +18,8 @@ export class OrderFormComponent implements OnChanges {
   orderForm: FormGroup;
   submitting = signal<boolean>(false);
   errorMessage = signal<string>('');
+
+  private destroyRef = inject(DestroyRef);
 
   constructor(
     private fb: FormBuilder,
@@ -52,7 +55,7 @@ export class OrderFormComponent implements OnChanges {
       ...this.orderForm.value
     };
 
-    this.orderService.create(orderData).subscribe({
+    this.orderService.create(orderData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (order) => {
         this.orderCreated.emit(order);
         this.orderForm.reset({ status: 'pending' });

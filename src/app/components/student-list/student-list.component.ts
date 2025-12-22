@@ -1,5 +1,6 @@
-import { Component, OnInit, Output, EventEmitter, signal } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, signal, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Student } from '../../models/student.model';
 import { StudentService } from '../../services/student.service';
 import { StudentFormComponent } from '../student-form/student-form.component';
@@ -20,6 +21,8 @@ export class StudentListComponent implements OnInit {
   errorMessage = signal<string>('');
   showAddForm = signal<boolean>(false);
 
+  private destroyRef = inject(DestroyRef);
+
   constructor(private studentService: StudentService) {}
 
   ngOnInit(): void {
@@ -30,7 +33,7 @@ export class StudentListComponent implements OnInit {
     this.loading.set(true);
     this.errorMessage.set('');
 
-    this.studentService.getAll().subscribe({
+    this.studentService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (students) => {
         this.students.set(students);
         this.loading.set(false);
