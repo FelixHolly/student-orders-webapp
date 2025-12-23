@@ -50,21 +50,6 @@ export class OrderListComponent implements OnChanges {
     return this.orders().reduce((sum, order) => sum + order.total, 0);
   }
 
-  formatDate(dateString: string | undefined): string {
-    if (!dateString) {
-      return 'N/A';
-    }
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) {
-      return 'Invalid date';
-    }
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
-    }).format(date);
-  }
-
   onOrderCreated(order: Order): void {
     this.orders.update(orders => [...orders, order]);
     this.showAddForm.set(false);

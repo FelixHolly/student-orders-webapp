@@ -203,30 +203,6 @@ describe('OrderListComponent', () => {
     });
   });
 
-  describe('formatDate', () => {
-    it('should format valid date string', () => {
-      const result = component.formatDate('2024-12-08T10:00:00');
-      expect(result).toMatch(/Dec 8, 2024/);
-    });
-
-    it('should return "N/A" for undefined', () => {
-      expect(component.formatDate(undefined)).toBe('N/A');
-    });
-
-    it('should return "Invalid date" for invalid date string', () => {
-      expect(component.formatDate('invalid-date')).toBe('Invalid date');
-    });
-
-    it('should handle different date formats', () => {
-      const result = component.formatDate('2024-01-15T08:30:00');
-      expect(result).toMatch(/Jan 15, 2024/);
-    });
-
-    it('should return "N/A" for empty string', () => {
-      expect(component.formatDate('')).toBe('N/A');
-    });
-  });
-
   describe('onOrderCreated', () => {
     beforeEach(() => {
       component.studentId = 1;
@@ -330,16 +306,6 @@ describe('OrderListComponent', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle orders with missing createdAt', () => {
-      const ordersWithoutDate: Order[] = [
-        { id: 1, studentId: 1, total: 25.00, status: 'paid' }
-      ];
-
-      component.orders.set(ordersWithoutDate);
-
-      expect(component.formatDate(ordersWithoutDate[0].createdAt)).toBe('N/A');
-    });
-
     it('should handle very large order totals', () => {
       const largeOrders: Order[] = [
         { id: 1, studentId: 1, total: 999999.99, status: 'paid' }

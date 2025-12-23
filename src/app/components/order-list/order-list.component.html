@@ -54,7 +54,7 @@
                   {{ order.status }}
                 </span>
               </td>
-              <td class="date">{{ formatDate(order.createdAt!) }}</td>
+              <td class="date">{{ order.createdAt | date }}</td>
             </tr>
           }
         </tbody>
