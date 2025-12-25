@@ -58,4 +58,31 @@ export class OrderListComponent implements OnChanges {
   toggleAddForm(): void {
     this.showAddForm.update(value => !value);
   }
+
+  deleteOrder(id: number): void {
+    this.orderService.delete(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.orders.update(orders => orders.filter(order => order.id !== id));
+      },
+      error: (err) => {
+        this.errorMessage.set(err.error?.message || 'Failed to delete order');
+      }
+    });
+  }
+
+  toggleStatus(order: Order): void {
+    if (!order.id) return;
+
+    const newStatus = order.status === 'pending' ? 'paid' : 'pending';
+    this.orderService.updateStatus(order.id, newStatus).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (updatedOrder) => {
+        this.orders.update(orders =>
+          orders.map(o => o.id === updatedOrder.id ? updatedOrder : o)
+        );
+      },
+      error: (err) => {
+        this.errorMessage.set(err.error?.message || 'Failed to update order status');
+      }
+    });
+  }
 }

@@ -21,4 +21,12 @@ export class OrderService {
   create(order: Omit<Order, 'id' | 'createdAt'>): Observable<Order> {
     return this.http.post<Order>(this.apiUrl, order);
   }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  updateStatus(id: number, status: string): Observable<Order> {
+    return this.http.patch<Order>(`${this.apiUrl}/${id}/status`, { status });
+  }
 }
