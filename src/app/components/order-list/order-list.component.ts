@@ -74,7 +74,7 @@ export class OrderListComponent implements OnChanges {
     if (!order.id) return;
 
     const newStatus = order.status === 'pending' ? 'paid' : 'pending';
-    this.orderService.updateStatus(order.id, newStatus).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.orderService.updateStatus(order.id, { status: newStatus }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (updatedOrder) => {
         this.orders.update(orders =>
           orders.map(o => o.id === updatedOrder.id ? updatedOrder : o)

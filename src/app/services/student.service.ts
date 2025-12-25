@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Student } from '../models/student.model';
+import { Student, CreateStudentRequest, UpdateStudentRequest } from '../models/student.model';
 import { environment } from '../../environments/environment.development';
 
 @Injectable({
@@ -16,7 +16,15 @@ export class StudentService {
     return this.http.get<Student[]>(this.apiUrl);
   }
 
-  create(student: Omit<Student, 'id' | 'createdAt'>): Observable<Student> {
-    return this.http.post<Student>(this.apiUrl, student);
+  create(request: CreateStudentRequest): Observable<Student> {
+    return this.http.post<Student>(this.apiUrl, request);
+  }
+
+  update(id: number, request: UpdateStudentRequest): Observable<Student> {
+    return this.http.put<Student>(`${this.apiUrl}/${id}`, request);
+  }
+
+  delete(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

@@ -1,8 +1,8 @@
-import { Component, Output, EventEmitter, signal, DestroyRef, inject } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, DestroyRef, inject, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Student } from '../../models/student.model';
+import { Student, CreateStudentRequest, UpdateStudentRequest } from '../../models/student.model';
 import { StudentService } from '../../services/student.service';
 
 @Component({
@@ -11,14 +11,21 @@ import { StudentService } from '../../services/student.service';
   templateUrl: './student-form.component.html',
   styleUrl: './student-form.component.scss'
 })
-export class StudentFormComponent {
+export class StudentFormComponent implements OnChanges {
+  @Input() student: Student | null = null;
   @Output() studentCreated = new EventEmitter<Student>();
+  @Output() studentUpdated = new EventEmitter<Student>();
+  @Output() cancelled = new EventEmitter<void>();
 
   studentForm: FormGroup;
   submitting = signal<boolean>(false);
   errorMessage = signal<string>('');
 
   private destroyRef = inject(DestroyRef);
+
+  get isEditMode(): boolean {
+    return !!this.student?.id;
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -31,6 +38,21 @@ export class StudentFormComponent {
     });
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['student'] && this.student) {
+      this.studentForm.patchValue({
+        name: this.student.name,
+        grade: this.student.grade,
+        school: this.student.school
+      });
+    }
+  }
+
+  onCancel(): void {
+    this.studentForm.reset();
+    this.cancelled.emit();
+  }
+
   onSubmit(): void {
     if (this.studentForm.invalid) {
       this.studentForm.markAllAsTouched();
@@ -40,19 +62,43 @@ export class StudentFormComponent {
     this.submitting.set(true);
     this.errorMessage.set('');
 
-    const studentData = this.studentForm.value;
+    if (this.isEditMode && this.student?.id) {
+      const request: UpdateStudentRequest = {
+        name: this.studentForm.value.name,
+        grade: this.studentForm.value.grade,
+        school: this.studentForm.value.school
+      };
 
-    this.studentService.create(studentData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (student) => {
-        this.studentCreated.emit(student);
-        this.studentForm.reset();
-        this.submitting.set(false);
-      },
-      error: (err) => {
-        this.errorMessage.set(err.error?.message || 'Failed to create student');
-        this.submitting.set(false);
-      }
-    });
+      this.studentService.update(this.student.id, request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (student) => {
+          this.studentUpdated.emit(student);
+          this.studentForm.reset();
+          this.submitting.set(false);
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Failed to update student');
+          this.submitting.set(false);
+        }
+      });
+    } else {
+      const request: CreateStudentRequest = {
+        name: this.studentForm.value.name,
+        grade: this.studentForm.value.grade,
+        school: this.studentForm.value.school
+      };
+
+      this.studentService.create(request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (student) => {
+          this.studentCreated.emit(student);
+          this.studentForm.reset();
+          this.submitting.set(false);
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Failed to create student');
+          this.submitting.set(false);
+        }
+      });
+    }
   }
 
   getFieldError(fieldName: string): string {

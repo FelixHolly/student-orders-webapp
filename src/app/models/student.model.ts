@@ -5,3 +5,15 @@ export interface Student {
   school: string;
   createdAt?: string;
 }
+
+export interface CreateStudentRequest {
+  name: string;
+  grade: string;
+  school: string;
+}
+
+export interface UpdateStudentRequest {
+  name: string;
+  grade: string;
+  school: string;
+}

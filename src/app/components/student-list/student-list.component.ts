@@ -20,6 +20,8 @@ export class StudentListComponent implements OnInit {
   loading = signal<boolean>(false);
   errorMessage = signal<string>('');
   showAddForm = signal<boolean>(false);
+  openMenuId = signal<number | null>(null);
+  editingStudent = signal<Student | null>(null);
 
   private destroyRef = inject(DestroyRef);
 
@@ -61,5 +63,52 @@ export class StudentListComponent implements OnInit {
 
   toggleAddForm(): void {
     this.showAddForm.update(value => !value);
+    this.editingStudent.set(null);
+  }
+
+  toggleMenu(event: Event, studentId: number): void {
+    event.stopPropagation();
+    this.openMenuId.update(id => id === studentId ? null : studentId);
+  }
+
+  closeMenu(): void {
+    this.openMenuId.set(null);
+  }
+
+  editStudent(event: Event, student: Student): void {
+    event.stopPropagation();
+    this.editingStudent.set(student);
+    this.showAddForm.set(true);
+    this.openMenuId.set(null);
+  }
+
+  deleteStudent(event: Event, id: number): void {
+    event.stopPropagation();
+    this.openMenuId.set(null);
+
+    this.studentService.delete(id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => {
+        this.students.update(students => students.filter(s => s.id !== id));
+        if (this.selectedStudent()?.id === id) {
+          this.selectedStudent.set(null);
+        }
+      },
+      error: (err) => {
+        this.errorMessage.set(err.error?.message || 'Failed to delete student');
+      }
+    });
+  }
+
+  onStudentUpdated(student: Student): void {
+    this.students.update(students =>
+      students.map(s => s.id === student.id ? student : s)
+    );
+    this.showAddForm.set(false);
+    this.editingStudent.set(null);
+  }
+
+  onFormCancelled(): void {
+    this.showAddForm.set(false);
+    this.editingStudent.set(null);
   }
 }

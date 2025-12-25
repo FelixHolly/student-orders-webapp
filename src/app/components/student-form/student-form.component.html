@@ -1,5 +1,5 @@
 <div class="student-form">
-  <h3>Add New Student</h3>
+  <h3>{{ isEditMode ? 'Edit Student' : 'Add New Student' }}</h3>
 
   @if (errorMessage()) {
     <div class="error-message">
@@ -57,16 +57,25 @@
       }
     </div>
 
-    <button
-      type="submit"
-      [disabled]="studentForm.invalid || submitting()"
-      class="btn-primary"
-    >
-      @if (!submitting()) {
-        <span>Create Student</span>
-      } @else {
-        <span>Creating...</span>
-      }
-    </button>
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="onCancel()"
+      >
+        Cancel
+      </button>
+      <button
+        type="submit"
+        [disabled]="studentForm.invalid || submitting()"
+        class="btn-primary"
+      >
+        @if (!submitting()) {
+          <span>{{ isEditMode ? 'Save Changes' : 'Create Student' }}</span>
+        } @else {
+          <span>{{ isEditMode ? 'Saving...' : 'Creating...' }}</span>
+        }
+      </button>
+    </div>
   </form>
 </div>

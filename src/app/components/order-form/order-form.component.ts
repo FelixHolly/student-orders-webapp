@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, signal, OnChanges, SimpleChange
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Order } from '../../models/order.model';
+import { Order, CreateOrderRequest } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
 
 @Component({
@@ -50,12 +50,13 @@ export class OrderFormComponent implements OnChanges {
     this.submitting.set(true);
     this.errorMessage.set('');
 
-    const orderData = {
+    const request: CreateOrderRequest = {
       studentId: this.studentId,
-      ...this.orderForm.value
+      total: this.orderForm.value.total,
+      status: this.orderForm.value.status
     };
 
-    this.orderService.create(orderData).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.orderService.create(request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (order) => {
         this.orderCreated.emit(order);
         this.orderForm.reset({ status: 'pending' });

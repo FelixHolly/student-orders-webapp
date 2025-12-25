@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Order } from '../models/order.model';
+import { Order, CreateOrderRequest, UpdateOrderStatusRequest } from '../models/order.model';
 import { environment } from '../../environments/environment.development';
 
 @Injectable({
@@ -18,15 +18,15 @@ export class OrderService {
     });
   }
 
-  create(order: Omit<Order, 'id' | 'createdAt'>): Observable<Order> {
-    return this.http.post<Order>(this.apiUrl, order);
+  create(request: CreateOrderRequest): Observable<Order> {
+    return this.http.post<Order>(this.apiUrl, request);
   }
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  updateStatus(id: number, status: string): Observable<Order> {
-    return this.http.patch<Order>(`${this.apiUrl}/${id}/status`, { status });
+  updateStatus(id: number, request: UpdateOrderStatusRequest): Observable<Order> {
+    return this.http.patch<Order>(`${this.apiUrl}/${id}/status`, request);
   }
 }

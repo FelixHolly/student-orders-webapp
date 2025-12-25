@@ -10,7 +10,10 @@
 
   @if (showAddForm()) {
     <app-student-form
+      [student]="editingStudent()"
       (studentCreated)="onStudentCreated($event)"
+      (studentUpdated)="onStudentUpdated($event)"
+      (cancelled)="onFormCancelled()"
     ></app-student-form>
   } @else {
     @if (loading()) {
@@ -43,7 +46,31 @@
           role="button"
           [attr.aria-label]="'Select student ' + student.name"
         >
-          <h3>{{ student.name }}</h3>
+          <div class="card-header">
+            <h3>{{ student.name }}</h3>
+            @if (student.id) {
+              <div class="menu-container">
+                <button
+                  class="kebab-btn"
+                  (click)="toggleMenu($event, student.id)"
+                  [attr.aria-expanded]="openMenuId() === student.id"
+                  aria-label="Open menu"
+                >
+                  <span class="kebab-icon">⋮</span>
+                </button>
+                @if (openMenuId() === student.id) {
+                  <div class="dropdown-menu">
+                    <button class="menu-item" (click)="editStudent($event, student)">
+                      Edit
+                    </button>
+                    <button class="menu-item delete" (click)="deleteStudent($event, student.id)">
+                      Delete
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+          </div>
           <p class="grade">{{ student.grade }}</p>
           <p class="school">{{ student.school }}</p>
         </div>
