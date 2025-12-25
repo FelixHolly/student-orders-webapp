@@ -16,10 +16,52 @@
       (cancelled)="onFormCancelled()"
     ></app-student-form>
   } @else {
+    <div class="search-filter-bar">
+      <div class="search-input-wrapper">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search by name..."
+          [ngModel]="searchName()"
+          (ngModelChange)="searchName.set($event)"
+          (keyup.enter)="onSearch()"
+        />
+      </div>
+      <input
+        type="text"
+        class="filter-input"
+        placeholder="Grade"
+        [ngModel]="filterGrade()"
+        (ngModelChange)="filterGrade.set($event)"
+        (keyup.enter)="onSearch()"
+      />
+      <input
+        type="text"
+        class="filter-input"
+        placeholder="School"
+        [ngModel]="filterSchool()"
+        (ngModelChange)="filterSchool.set($event)"
+        (keyup.enter)="onSearch()"
+      />
+      <button class="search-btn" (click)="onSearch()">Search</button>
+      @if (hasActiveFilters()) {
+        <button class="clear-btn" (click)="clearFilters()">Clear</button>
+      }
+    </div>
+
     @if (loading()) {
-      <div class="loading">
-        <div class="spinner"></div>
-        <p>Loading students...</p>
+      <div class="skeleton-grid">
+        @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+          <div class="skeleton-card">
+            <div class="skeleton-header"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line short"></div>
+          </div>
+        }
       </div>
     }
 
@@ -31,23 +73,34 @@
 
     @if (!loading() && students().length === 0 && !errorMessage()) {
       <div class="empty-state">
-        <p>No students found. Click + to add your first student.</p>
+        @if (hasActiveFilters()) {
+          <p>No students match your search criteria.</p>
+          <button class="clear-filters-btn" (click)="clearFilters()">Clear filters</button>
+        } @else {
+          <p>No students found. Click + to add your first student.</p>
+        }
       </div>
     }
 
     @if (!loading() && students().length > 0) {
-    <div class="students-grid">
-      @for (student of students(); track student.id) {
-        <div
-          class="student-card"
-          [class.selected]="isSelected(student)"
-          (click)="selectStudent(student)"
-          tabindex="0"
-          role="button"
-          [attr.aria-label]="'Select student ' + student.name"
-        >
-          <div class="card-header">
-            <h3>{{ student.name }}</h3>
+      <div class="students-grid">
+        @for (student of students(); track student.id) {
+          <div
+            class="student-card"
+            [class.selected]="isSelected(student)"
+            (click)="selectStudent(student)"
+            tabindex="0"
+            role="button"
+            [attr.aria-label]="'Select student ' + student.name"
+          >
+            <div class="card-content">
+              <h3>{{ student.name }}</h3>
+              <span class="meta">
+                <span class="grade">{{ student.grade }}</span>
+                <span class="separator">·</span>
+                <span class="school">{{ student.school }}</span>
+              </span>
+            </div>
             @if (student.id) {
               <div class="menu-container">
                 <button
@@ -71,11 +124,16 @@
               </div>
             }
           </div>
-          <p class="grade">{{ student.grade }}</p>
-          <p class="school">{{ student.school }}</p>
-        </div>
-      }
-    </div>
+        }
+      </div>
+
+      <app-pagination
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        [totalElements]="totalElements()"
+        [pageSize]="pageSize()"
+        (pageChange)="onPageChange($event)"
+      ></app-pagination>
     }
   }
 </div>

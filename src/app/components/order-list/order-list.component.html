@@ -17,10 +17,52 @@
       (cancelled)="onFormCancelled()"
     ></app-order-form>
   } @else {
+    <div class="filter-bar">
+      <select
+        class="filter-select"
+        [ngModel]="filterStatus()"
+        (ngModelChange)="filterStatus.set($event)"
+      >
+        <option value="">All Statuses</option>
+        <option value="pending">Pending</option>
+        <option value="paid">Paid</option>
+      </select>
+      <input
+        type="number"
+        class="filter-input"
+        placeholder="Min $"
+        [ngModel]="filterMinTotal()"
+        (ngModelChange)="filterMinTotal.set($event)"
+        (keyup.enter)="onFilter()"
+      />
+      <input
+        type="number"
+        class="filter-input"
+        placeholder="Max $"
+        [ngModel]="filterMaxTotal()"
+        (ngModelChange)="filterMaxTotal.set($event)"
+        (keyup.enter)="onFilter()"
+      />
+      <button class="filter-btn" (click)="onFilter()">Filter</button>
+      @if (hasActiveFilters()) {
+        <button class="clear-btn" (click)="clearFilters()">Clear</button>
+      }
+    </div>
+
     @if (loading()) {
-      <div class="loading">
-        <div class="spinner"></div>
-        <p>Loading orders...</p>
+      <div class="skeleton-table">
+        <div class="skeleton-header-row">
+          @for (i of [1, 2, 3, 4, 5]; track i) {
+            <div class="skeleton-cell header"></div>
+          }
+        </div>
+        @for (i of [1, 2, 3, 4, 5]; track i) {
+          <div class="skeleton-row">
+            @for (j of [1, 2, 3, 4, 5]; track j) {
+              <div class="skeleton-cell"></div>
+            }
+          </div>
+        }
       </div>
     }
 
@@ -32,71 +74,96 @@
 
     @if (!loading() && orders().length === 0 && !errorMessage()) {
       <div class="empty-state">
-        <p>No orders found. Click + to add your first order.</p>
+        @if (hasActiveFilters()) {
+          <p>No orders match your filter criteria.</p>
+          <button class="clear-filters-btn" (click)="clearFilters()">Clear filters</button>
+        } @else {
+          <p>No orders found. Click + to add your first order.</p>
+        }
       </div>
     }
 
     @if (!loading() && !errorMessage() && orders().length > 0) {
-    <div class="orders-table-container">
-      <table class="orders-table">
-        <thead>
-          <tr>
-            <th>Order ID</th>
-            <th>Total</th>
-            <th>Status</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (order of orders(); track order.id) {
+      <div class="orders-table-container">
+        <table class="orders-table">
+          <thead>
             <tr>
-              <td>#{{ order.id }}</td>
-              <td class="total">{{ order.total | currency:'USD' }}</td>
-              <td>
-                <button
-                  class="status-badge"
-                  [class]="'status-' + order.status"
-                  (click)="toggleStatus(order)"
-                  [attr.aria-label]="'Change status from ' + order.status"
-                >
-                  {{ order.status }}
-                </button>
-              </td>
-              <td class="date">{{ order.createdAt | date }}</td>
-              <td class="actions">
-                <button
-                  class="edit-btn"
-                  (click)="editOrder(order)"
-                  aria-label="Edit order"
-                >
-                  Edit
-                </button>
-                @if (order.id) {
+              <th class="sortable" (click)="sortBy('id')">
+                Order ID
+                <span class="sort-icon">{{ getSortIcon('id') }}</span>
+              </th>
+              <th class="sortable" (click)="sortBy('total')">
+                Total
+                <span class="sort-icon">{{ getSortIcon('total') }}</span>
+              </th>
+              <th class="sortable" (click)="sortBy('status')">
+                Status
+                <span class="sort-icon">{{ getSortIcon('status') }}</span>
+              </th>
+              <th class="sortable" (click)="sortBy('createdAt')">
+                Date
+                <span class="sort-icon">{{ getSortIcon('createdAt') }}</span>
+              </th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (order of orders(); track order.id) {
+              <tr>
+                <td>#{{ order.id }}</td>
+                <td class="total">{{ order.total | currency:'USD' }}</td>
+                <td>
                   <button
-                    class="delete-btn"
-                    (click)="deleteOrder(order.id)"
-                    aria-label="Delete order"
+                    class="status-badge"
+                    [class]="'status-' + order.status"
+                    (click)="toggleStatus(order)"
+                    [attr.aria-label]="'Change status from ' + order.status"
                   >
-                    Delete
+                    {{ order.status }}
                   </button>
-                }
-              </td>
-            </tr>
+                </td>
+                <td class="date">{{ order.createdAt | date }}</td>
+                <td class="actions">
+                  <button
+                    class="edit-btn"
+                    (click)="editOrder(order)"
+                    aria-label="Edit order"
+                  >
+                    Edit
+                  </button>
+                  @if (order.id) {
+                    <button
+                      class="delete-btn"
+                      (click)="deleteOrder(order.id)"
+                      aria-label="Delete order"
+                    >
+                      Delete
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+          @if (orders().length > 1) {
+            <tfoot>
+              <tr class="total-row">
+                <td colspan="1"><strong>Total:</strong></td>
+                <td colspan="4" class="grand-total">
+                  <strong>{{ getTotalAmount() | currency:'USD' }}</strong>
+                </td>
+              </tr>
+            </tfoot>
           }
-        </tbody>
-        @if (orders().length > 1) {
-          <tfoot>
-            <tr class="total-row">
-              <td colspan="1"><strong>Total:</strong></td>
-              <td colspan="4" class="grand-total">
-                <strong>{{ getTotalAmount() | currency:'USD' }}</strong>
-              </td>
-            </tr>
-          </tfoot>
-        }
-      </table>
-    </div>
+        </table>
+      </div>
+
+      <app-pagination
+        [currentPage]="currentPage()"
+        [totalPages]="totalPages()"
+        [totalElements]="totalElements()"
+        [pageSize]="pageSize()"
+        (pageChange)="onPageChange($event)"
+      ></app-pagination>
     }
   }
 </div>

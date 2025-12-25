@@ -1,14 +1,17 @@
-import { Component, OnInit, Output, EventEmitter, signal, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, signal, DestroyRef, inject, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Student } from '../../models/student.model';
 import { StudentService } from '../../services/student.service';
 import { StudentFormComponent } from '../student-form/student-form.component';
 import { AddButton } from '../add-button/add-button';
+import { Pagination } from '../pagination/pagination';
+import { StudentFilter } from '../../models/pagination.model';
 
 @Component({
   selector: 'app-student-list',
-  imports: [CommonModule, StudentFormComponent, AddButton],
+  imports: [CommonModule, FormsModule, StudentFormComponent, AddButton, Pagination],
   templateUrl: './student-list.component.html',
   styleUrl: './student-list.component.scss'
 })
@@ -23,6 +26,23 @@ export class StudentListComponent implements OnInit {
   openMenuId = signal<number | null>(null);
   editingStudent = signal<Student | null>(null);
 
+  // Pagination state
+  currentPage = signal(0);
+  totalPages = signal(0);
+  totalElements = signal(0);
+  pageSize = signal(10);
+
+  // Filter state
+  searchName = signal('');
+  filterGrade = signal('');
+  filterSchool = signal('');
+
+  hasActiveFilters = computed(() =>
+    this.searchName().trim() !== '' ||
+    this.filterGrade() !== '' ||
+    this.filterSchool() !== ''
+  );
+
   private destroyRef = inject(DestroyRef);
 
   constructor(private studentService: StudentService) {}
@@ -31,13 +51,24 @@ export class StudentListComponent implements OnInit {
     this.loadStudents();
   }
 
-  loadStudents(): void {
+  loadStudents(page: number = 0): void {
     this.loading.set(true);
     this.errorMessage.set('');
 
-    this.studentService.getAll().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (students) => {
-        this.students.set(students);
+    const filter: StudentFilter = {};
+    if (this.searchName().trim()) filter.name = this.searchName().trim();
+    if (this.filterGrade()) filter.grade = this.filterGrade();
+    if (this.filterSchool()) filter.school = this.filterSchool();
+
+    this.studentService.getAll(
+      { page, size: this.pageSize() },
+      Object.keys(filter).length > 0 ? filter : undefined
+    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (response) => {
+        this.students.set(response.content);
+        this.currentPage.set(response.number);
+        this.totalPages.set(response.totalPages);
+        this.totalElements.set(response.totalElements);
         this.loading.set(false);
       },
       error: (err) => {
@@ -45,6 +76,21 @@ export class StudentListComponent implements OnInit {
         this.loading.set(false);
       }
     });
+  }
+
+  onPageChange(page: number): void {
+    this.loadStudents(page);
+  }
+
+  onSearch(): void {
+    this.loadStudents(0);
+  }
+
+  clearFilters(): void {
+    this.searchName.set('');
+    this.filterGrade.set('');
+    this.filterSchool.set('');
+    this.loadStudents(0);
   }
 
   selectStudent(student: Student): void {

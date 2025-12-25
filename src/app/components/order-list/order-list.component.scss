@@ -93,8 +93,152 @@
   margin-bottom: 1rem;
 }
 
+.clear-filters-btn {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: #5a6fd6;
+  }
+}
+
+// Filter bar
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  background: white;
+  cursor: pointer;
+  min-width: 120px;
+
+  &:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+  }
+}
+
+.filter-input {
+  padding: 8px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  width: 80px;
+
+  &:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+  }
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background: #5a6fd6;
+  }
+}
+
+.clear-btn {
+  padding: 8px 12px;
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #e5e7eb;
+  }
+}
+
+// Skeleton loading
+.skeleton-table {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  overflow: hidden;
+}
+
+.skeleton-header-row {
+  display: flex;
+  background: #f8f9fa;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.skeleton-row {
+  display: flex;
+  border-bottom: 1px solid #e9ecef;
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.skeleton-cell {
+  flex: 1;
+  padding: 12px 16px;
+
+  &::after {
+    content: '';
+    display: block;
+    height: 16px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+  }
+
+  &.header::after {
+    height: 14px;
+    width: 70%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
 .orders-table-container {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   background: white;
   border-radius: 8px;
   border: 1px solid #e9ecef;
@@ -103,6 +247,7 @@
 
 .orders-table {
   width: 100%;
+  min-width: 500px;
   border-collapse: collapse;
 
   thead {
@@ -115,6 +260,23 @@
       color: #495057;
       font-size: clamp(0.8rem, 1.2vw, 0.9rem);
       border-bottom: 2px solid #e9ecef;
+      white-space: nowrap;
+
+      &.sortable {
+        cursor: pointer;
+        user-select: none;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: #e9ecef;
+        }
+
+        .sort-icon {
+          margin-left: 4px;
+          font-size: 0.75rem;
+          color: #667eea;
+        }
+      }
     }
   }
 
@@ -246,6 +408,76 @@ td.actions {
   &:focus {
     outline: 2px solid #dc3545;
     outline-offset: 2px;
+  }
+}
+
+// Mobile responsive styles
+@media screen and (max-width: 480px) {
+  .filter-bar {
+    .filter-select {
+      flex: 1;
+      min-width: 100px;
+    }
+
+    .filter-input {
+      flex: 1;
+      min-width: 60px;
+    }
+
+    .filter-btn,
+    .clear-btn {
+      flex: 1;
+    }
+  }
+
+  .orders-table {
+    min-width: 450px;
+
+    thead th,
+    tbody td {
+      padding: 8px 10px;
+      font-size: 0.8rem;
+    }
+
+    th:first-child,
+    td:first-child {
+      padding-left: 12px;
+    }
+
+    th:last-child,
+    td:last-child {
+      padding-right: 12px;
+    }
+  }
+
+  td.actions {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  .status-badge {
+    padding: 3px 8px;
+    font-size: 0.7rem;
+  }
+}
+
+// Tablet responsive styles
+@media screen and (max-width: 768px) {
+  .orders-table-container {
+    margin-bottom: 0.75rem;
+  }
+
+  .empty-state {
+    padding: 1.5rem;
+    font-size: 0.9rem;
   }
 }
 

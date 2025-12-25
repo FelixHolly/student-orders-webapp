@@ -106,19 +106,46 @@
   }
 }
 
+// Tablet landscape - keep side-by-side but adjust proportions
+@media screen and (max-width: 1024px) and (min-width: 769px) {
+  .grid {
+    grid-template-columns: 1fr 1.2fr;
+    gap: 1.5rem;
+  }
+
+  .container {
+    padding: 1.5rem;
+  }
+
+  .panel {
+    padding: 20px;
+  }
+}
+
+// Tablet portrait and smaller - stack vertically
 @media screen and (max-width: 768px) {
   .grid {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: auto 1fr;
     gap: 1rem;
   }
 
   .container {
     padding: 1rem;
+    height: auto;
+    min-height: 100vh;
   }
 
   .panel {
     padding: 16px;
+    height: auto;
+    min-height: 200px;
+    max-height: 45vh;
+
+    &:last-child {
+      max-height: none;
+      flex: 1;
+    }
   }
 
   header {
@@ -134,10 +161,65 @@
   }
 
   .panel-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+
     .student-info {
       flex-direction: column;
       align-items: flex-start;
       gap: 0.5rem;
+    }
+  }
+}
+
+// Mobile
+@media screen and (max-width: 480px) {
+  .container {
+    padding: 0.75rem;
+  }
+
+  .panel {
+    padding: 12px;
+    border-radius: 8px;
+    max-height: 40vh;
+
+    &:last-child {
+      max-height: none;
+    }
+  }
+
+  .panel-header {
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+
+    h2 {
+      font-size: 1rem;
+    }
+
+    .student-info {
+      gap: 0.4rem;
+
+      .badge {
+        padding: 3px 10px;
+        font-size: 0.75rem;
+      }
+
+      .school-name {
+        font-size: 0.8rem;
+      }
+    }
+  }
+
+  .empty-state-main {
+    min-height: 200px;
+    padding: 2rem 1rem;
+
+    h3 {
+      font-size: 1.2rem;
+    }
+
+    p {
+      font-size: 0.9rem;
     }
   }
 }
