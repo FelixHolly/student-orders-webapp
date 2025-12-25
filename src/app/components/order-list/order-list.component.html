@@ -11,7 +11,10 @@
   @if (showAddForm()) {
     <app-order-form
       [studentId]="studentId"
+      [order]="editingOrder()"
       (orderCreated)="onOrderCreated($event)"
+      (orderUpdated)="onOrderUpdated($event)"
+      (cancelled)="onFormCancelled()"
     ></app-order-form>
   } @else {
     @if (loading()) {
@@ -61,7 +64,14 @@
                 </button>
               </td>
               <td class="date">{{ order.createdAt | date }}</td>
-              <td>
+              <td class="actions">
+                <button
+                  class="edit-btn"
+                  (click)="editOrder(order)"
+                  aria-label="Edit order"
+                >
+                  Edit
+                </button>
                 @if (order.id) {
                   <button
                     class="delete-btn"

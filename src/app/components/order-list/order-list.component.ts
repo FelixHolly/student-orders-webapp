@@ -19,6 +19,7 @@ export class OrderListComponent implements OnChanges {
   loading = signal<boolean>(false);
   errorMessage = signal<string>('');
   showAddForm = signal<boolean>(false);
+  editingOrder = signal<Order | null>(null);
 
   private destroyRef = inject(DestroyRef);
 
@@ -57,6 +58,25 @@ export class OrderListComponent implements OnChanges {
 
   toggleAddForm(): void {
     this.showAddForm.update(value => !value);
+    this.editingOrder.set(null);
+  }
+
+  editOrder(order: Order): void {
+    this.editingOrder.set(order);
+    this.showAddForm.set(true);
+  }
+
+  onOrderUpdated(order: Order): void {
+    this.orders.update(orders =>
+      orders.map(o => o.id === order.id ? order : o)
+    );
+    this.showAddForm.set(false);
+    this.editingOrder.set(null);
+  }
+
+  onFormCancelled(): void {
+    this.showAddForm.set(false);
+    this.editingOrder.set(null);
   }
 
   deleteOrder(id: number): void {

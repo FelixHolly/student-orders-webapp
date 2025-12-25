@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, signal, OnChanges, SimpleChange
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Order, CreateOrderRequest } from '../../models/order.model';
+import { Order, CreateOrderRequest, UpdateOrderRequest } from '../../models/order.model';
 import { OrderService } from '../../services/order.service';
 
 @Component({
@@ -13,7 +13,10 @@ import { OrderService } from '../../services/order.service';
 })
 export class OrderFormComponent implements OnChanges {
   @Input() studentId!: number;
+  @Input() order: Order | null = null;
   @Output() orderCreated = new EventEmitter<Order>();
+  @Output() orderUpdated = new EventEmitter<Order>();
+  @Output() cancelled = new EventEmitter<void>();
 
   orderForm: FormGroup;
   submitting = signal<boolean>(false);
@@ -21,13 +24,18 @@ export class OrderFormComponent implements OnChanges {
 
   private destroyRef = inject(DestroyRef);
 
+  get isEditMode(): boolean {
+    return !!this.order?.id;
+  }
+
   constructor(
     private fb: FormBuilder,
     private orderService: OrderService
   ) {
     this.orderForm = this.fb.group({
       total: ['', [Validators.required, Validators.min(0.01)]],
-      status: ['pending', Validators.required]
+      status: ['pending', Validators.required],
+      createdAt: ['']
     });
   }
 
@@ -39,6 +47,23 @@ export class OrderFormComponent implements OnChanges {
         this.orderForm.disable();
       }
     }
+
+    if (changes['order'] && this.order) {
+      const createdAtDate = this.order.createdAt
+        ? new Date(this.order.createdAt).toISOString().split('T')[0]
+        : '';
+
+      this.orderForm.patchValue({
+        total: this.order.total,
+        status: this.order.status,
+        createdAt: createdAtDate
+      });
+    }
+  }
+
+  onCancel(): void {
+    this.orderForm.reset({ status: 'pending', createdAt: '' });
+    this.cancelled.emit();
   }
 
   onSubmit(): void {
@@ -50,23 +75,43 @@ export class OrderFormComponent implements OnChanges {
     this.submitting.set(true);
     this.errorMessage.set('');
 
-    const request: CreateOrderRequest = {
-      studentId: this.studentId,
-      total: this.orderForm.value.total,
-      status: this.orderForm.value.status
-    };
+    if (this.isEditMode && this.order?.id) {
+      const request: UpdateOrderRequest = {
+        total: this.orderForm.value.total,
+        status: this.orderForm.value.status,
+        createdAt: new Date(this.orderForm.value.createdAt).toISOString()
+      };
 
-    this.orderService.create(request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (order) => {
-        this.orderCreated.emit(order);
-        this.orderForm.reset({ status: 'pending' });
-        this.submitting.set(false);
-      },
-      error: (err) => {
-        this.errorMessage.set(err.error?.message || 'Failed to create order');
-        this.submitting.set(false);
-      }
-    });
+      this.orderService.update(this.order.id, request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (order) => {
+          this.orderUpdated.emit(order);
+          this.orderForm.reset({ status: 'pending', createdAt: '' });
+          this.submitting.set(false);
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Failed to update order');
+          this.submitting.set(false);
+        }
+      });
+    } else {
+      const request: CreateOrderRequest = {
+        studentId: this.studentId,
+        total: this.orderForm.value.total,
+        status: this.orderForm.value.status
+      };
+
+      this.orderService.create(request).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (order) => {
+          this.orderCreated.emit(order);
+          this.orderForm.reset({ status: 'pending', createdAt: '' });
+          this.submitting.set(false);
+        },
+        error: (err) => {
+          this.errorMessage.set(err.error?.message || 'Failed to create order');
+          this.submitting.set(false);
+        }
+      });
+    }
   }
 
   getFieldError(fieldName: string): string {

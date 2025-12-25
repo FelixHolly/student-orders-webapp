@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Order, CreateOrderRequest, UpdateOrderStatusRequest } from '../models/order.model';
+import { Order, CreateOrderRequest, UpdateOrderRequest, UpdateOrderStatusRequest } from '../models/order.model';
 import { environment } from '../../environments/environment.development';
 
 @Injectable({
@@ -28,5 +28,9 @@ export class OrderService {
 
   updateStatus(id: number, request: UpdateOrderStatusRequest): Observable<Order> {
     return this.http.patch<Order>(`${this.apiUrl}/${id}/status`, request);
+  }
+
+  update(id: number, request: UpdateOrderRequest): Observable<Order> {
+    return this.http.put<Order>(`${this.apiUrl}/${id}`, request);
   }
 }

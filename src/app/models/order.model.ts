@@ -15,3 +15,9 @@ export interface CreateOrderRequest {
 export interface UpdateOrderStatusRequest {
   status: string;
 }
+
+export interface UpdateOrderRequest {
+  total: number;
+  status: string;
+  createdAt: string;
+}
